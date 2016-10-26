@@ -12,14 +12,9 @@ namespace PickleTools.PickleBuilder {
 	public class BuildConfigWindow : EditorWindow {
 
 		// TODO:
-		// [ ] include instructions on how to set up your sdk folders
 		// [ ] test on windows
-		// [ ] remove specific scenes
-		// [ ] get paths from scene files
 		// [ ] add developer name
 		// [ ] set unity build settings of name, developer, and version from this config
-		// [ ] allow steam uploading of most recent build
-		// [ ] auto increment patch version
 
 		ConfigData data;
 		string helpInfo = "";
@@ -348,6 +343,10 @@ namespace PickleTools.PickleBuilder {
 					if(data.SteamData.BuildToSteam){
 						SteamLoginWindow.DoEnterLogin("Login to Steam", BuildWithLogin);
 					} else {
+						if(data.AutoIncrement && !data.Preview){
+							data.VersionNumberPatch += 1;
+							BuildScript.WriteData(data);
+						}
 						BuildScript.PerformBuild();
 					}
 				}

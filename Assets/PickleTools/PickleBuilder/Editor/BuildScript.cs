@@ -152,9 +152,9 @@ namespace PickleTools.PickleBuilder {
 			} else {
 				data.AutoIncrement = autoIncrement;
 			}
-			if(autoIncrement){
-				data.VersionNumberPatch = versionNumberPatch = versionNumberPatch + 1;
-			}
+			//if(autoIncrement){
+			//	data.VersionNumberPatch = versionNumberPatch = versionNumberPatch + 1;
+			//}
 
 			string completeVersionString = versionNumberMajor + "_" + versionNumberMinor + "_" + versionNumberPatch + "__" + 
 				System.DateTime.UtcNow.ToString().Replace('/', '_').Replace(' ', '_').Replace(':', '_');
@@ -344,8 +344,8 @@ namespace PickleTools.PickleBuilder {
 					data.BuildPath = path;
 				}
 			}
-			// create content directories for each build
 
+			// create content directories for each build
 			string scriptsPath = steamData.SDKPath + "/scripts/";
 			if(!System.IO.Directory.Exists(scriptsPath)){
 				UnityEngine.Debug.LogError("[BuildScript.cs]: Could not find the scripts folder of the Steamworks SDK. " +
