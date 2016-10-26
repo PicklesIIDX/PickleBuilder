@@ -4,8 +4,7 @@ A Unity tool for building to multiple platforms and uploading to steam.
 
 #Builder Window
 
-[[picture of build window]]
-![Unity Build Config Tool Wind](https://github.com/PicklesIIDX/PickleBuilder/build_config_tool.png "Unity Build Config Tool Window")
+![Unity Build Config Tool Wind](https://github.com/PicklesIIDX/PickleBuilder/raw/master/build_config_tool.png "Unity Build Config Tool Window")
 
 
 This is the build window which you can open by selecting Build > Build Config Window in the Unity Menu Bar. It allows you to define how you want to build your game for different platforms. 
