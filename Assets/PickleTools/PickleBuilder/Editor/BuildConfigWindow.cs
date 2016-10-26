@@ -5,12 +5,13 @@ using System.IO;
 using LitJson;
 using PickleTools.Extensions.ArrayExtensions;
 using PickleTools.UnityEditor;
+using System.Diagnostics;
+using System.Collections;
 
 namespace PickleTools.PickleBuilder {
 	public class BuildConfigWindow : EditorWindow {
 
 		// TODO:
-		// [ ] don't save account info
 		// [ ] include instructions on how to set up your sdk folders
 		// [ ] test on windows
 		// [ ] remove specific scenes
@@ -19,7 +20,6 @@ namespace PickleTools.PickleBuilder {
 		// [ ] set unity build settings of name, developer, and version from this config
 		// [ ] allow steam uploading of most recent build
 		// [ ] auto increment patch version
-		// [ ] 
 
 		ConfigData data;
 		string helpInfo = "";
@@ -74,10 +74,10 @@ namespace PickleTools.PickleBuilder {
 
 		void OnGUI(){
 			if(data == null){
-				if(GUILayout.Button("Reload Config")){
+				if(GUILayout.Button("Reload Config", GUILayout.Height(80))){
 					Initialize();
 				}
-				if(GUILayout.Button("Open Config File")){
+				if(GUILayout.Button("Open Config File", GUILayout.Height(80))){
 					BuildScript.EditConfig();
 				}
 			} else {
@@ -188,11 +188,11 @@ namespace PickleTools.PickleBuilder {
 				if(data.SteamData.BuildToSteam){
 					// we should do the cool expanding thing
 					GUILayout.BeginHorizontal();
-					EditorGUILayout.PrefixLabel(new GUIContent("Steam SDK Path", "The location of the ContentBuilder folder in" +
+					EditorGUILayout.PrefixLabel(new GUIContent("Steam SDK Content Builder Path", "The location of the ContentBuilder folder in" +
 						" the Steam SDK"));
 					buttonNameLength = 40;
-					buttonName = data.SteamData.SteamCMDPath.Substring(Mathf.Max(0, data.SteamData.SDKPath.Length - 
-						buttonNameLength), Mathf.Min(buttonNameLength, data.SteamData.SteamCMDPath.Length));
+					buttonName = data.SteamData.SDKPath.Substring(Mathf.Max(0, data.SteamData.SDKPath.Length - 
+					    buttonNameLength), Mathf.Min(buttonNameLength, data.SteamData.SDKPath.Length));
 					if(buttonName.Length == buttonNameLength){
 						buttonName = "..." + buttonName;
 					}
@@ -203,6 +203,12 @@ namespace PickleTools.PickleBuilder {
 						}
 					}
 					GUILayout.EndHorizontal();
+					//if(GUILayout.Button("Download Steam SDK")){
+					//	string selectedPath = EditorUtility.OpenFolderPanel("Steam SDK Path", data.SteamData.SDKPath, data.SteamData.SDKPath);
+					//	if (selectedPath != "") {
+					//		DownloadSteamSDK(selectedPath);
+					//	}
+					//}
 
 					GUILayout.BeginHorizontal();
 					EditorGUILayout.PrefixLabel(new GUIContent("Steam CMD Path", "The location of the command line interface" +
@@ -382,6 +388,48 @@ namespace PickleTools.PickleBuilder {
 		static void BuildWithLogin(string accountName, string password){
 			BuildScript.PerformBuild(accountName, password);
 		}
+
+
+		static void DownloadSteamSDK(string path) {
+			if (!Directory.Exists(path)) {
+				Directory.CreateDirectory(path);
+			}
+
+			ProcessStartInfo downloadProcess;
+
+#if UNITY_EDITOR_OSX
+			string downloadScriptPath = Application.dataPath + "/PickleTools/PickleBuilder/downloadsdk.sh";
+			UnityEngine.Debug.Log(downloadScriptPath);
+			downloadProcess = new ProcessStartInfo {
+				FileName = downloadScriptPath,
+				UseShellExecute = false,
+				RedirectStandardOutput = true,
+				RedirectStandardError = true,
+				CreateNoWindow = false
+			};
+			Process proc = new Process {
+				StartInfo = downloadProcess
+			};
+			UnityEngine.Debug.Log(downloadProcess.FileName.ToString());
+			proc.Start();
+
+			EditorCoroutine.start(DisplayDownloadLog(proc));
+#else
+		// TODO: download file and unzip it
+#endif
+		}
+
+		static IEnumerator DisplayDownloadLog(Process proc) {
+			UnityEngine.Debug.Log("STarting download...");
+			while (!proc.StandardOutput.EndOfStream) {
+				UnityEngine.Debug.Log("log downloading...");
+				System.Console.WriteLine("downloading...");
+				UnityEngine.Debug.Log(proc.StandardOutput.ReadLine());
+				yield return null;
+			}
+			yield return null;
+			UnityEngine.Debug.Log("[BuildConfigWindow.cs]: Download Complete.");
+		}
 	}
 }
 
@@ -420,4 +468,5 @@ public class SteamLoginWindow : EditorWindow {
 		SteamLoginWindow popup = EditorWindow.GetWindow(typeof(SteamLoginWindow), true, title, true) as SteamLoginWindow;
 		popup.callback = callback;
 	}
+
 }

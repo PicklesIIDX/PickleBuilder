@@ -16,11 +16,11 @@ namespace PickleTools.UnityEditor {
 		}
 
 		void start() {
-			//Debug.Log("start");
+			UnityEngine.Debug.Log("start");
 			EditorApplication.update += update;
 		}
 		public void stop() {
-			//Debug.Log("stop");
+			UnityEngine.Debug.Log("stop");
 			EditorApplication.update -= update;
 		}
 
@@ -30,7 +30,7 @@ namespace PickleTools.UnityEditor {
 				 * Also, Unity probably catches when calling EditorApplication.update.
 				 */
 
-			//Debug.Log("update");
+			UnityEngine.Debug.Log("update");
 			if (!routine.MoveNext()) {
 				stop();
 			}

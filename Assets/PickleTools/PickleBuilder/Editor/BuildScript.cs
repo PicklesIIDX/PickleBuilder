@@ -296,11 +296,11 @@ namespace PickleTools.PickleBuilder {
 			}
 
 			if(steamData.BuildToSteam){
-				PushToSteam(accountName, password);
+				PushToSteam(accountName, password, completeVersionString);
 			}
 		}
 
-		static void PushToSteam(string accountName, string password){
+		static void PushToSteam(string accountName, string password, string completeVersionString){
 			
 			if(!System.IO.File.Exists(ConfigPath)){
 				ConfigData newData = new ConfigData();
@@ -337,8 +337,6 @@ namespace PickleTools.PickleBuilder {
 				} else {
 					data.VersionNumberPatch = versionNumberPatch;
 				}
-				string completeVersionString = versionNumberMajor + "_" + versionNumberMinor + "_" + versionNumberPatch + "__" + 
-					System.DateTime.UtcNow.ToString().Replace('/', '_').Replace(' ', '_').Replace(':', '_');
 				path = System.Environment.CurrentDirectory + "/build" + "/" + completeVersionString + "/";
 				if(data.BuildPath != ""){
 					path = data.BuildPath + "/" + completeVersionString + "/";
@@ -420,13 +418,14 @@ namespace PickleTools.PickleBuilder {
 
 				// 3. run the sdk build function
 				UnityEngine.Debug.LogWarning("Starting steam publishing process...");
+				string appBuildFilePath = steamData.SDKPath + "/scripts/app_build_" + steamData.AppBuild.AppID + ".vdf";
 				ProcessStartInfo startInfo = new ProcessStartInfo()
 				{
 					FileName = steamData.SteamCMDPath,
 					Arguments = "+login " +
 						accountName + " " + 
 						password + " " + 
-						"+run_app_build_http ../scripts/app_build_" + steamData.AppBuild.AppID + ".vdf +quit",
+						"+run_app_build_http " + appBuildFilePath + " +quit",
 					UseShellExecute = false,
 					RedirectStandardOutput  = true,
 				};
@@ -435,7 +434,13 @@ namespace PickleTools.PickleBuilder {
 					StartInfo = startInfo,
 				};
 				proc.Start();
-				EditorCoroutine.start(DisplaySteamLog(proc, steamData.SDKPath + "/scripts/"));
+				// Editor coroutine is being exited early by unity, so we'll just skip it for now
+				//EditorCoroutine.start(DisplaySteamLog(proc, steamData.SDKPath + "/scripts/"));
+				while (!proc.StandardOutput.EndOfStream) {
+					UnityEngine.Debug.Log(proc.StandardOutput.ReadLine());
+				}
+				UnityEngine.Debug.Log("[BuildScript.cs]: Steam upload process exited.");
+				Process.Start(steamData.SDKPath + "/scripts/");
 			}
 		}
 
@@ -460,7 +465,8 @@ namespace PickleTools.PickleBuilder {
 			configStream.Write(jsonBytes, 0, jsonBytes.Length);
 			configStream.Flush();
 			configStream.Close();
-			AssetDatabase.ImportAsset(ConfigPath.Substring(ConfigPath.IndexOf("Assets/") + 7));
+			string importPath = ConfigPath.Substring(ConfigPath.IndexOf("Assets/"));
+			AssetDatabase.ImportAsset(importPath);
 		}
 	}
 
