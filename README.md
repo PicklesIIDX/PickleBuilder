@@ -13,10 +13,13 @@ Build Path: This is the folder all of your builds will be organized into. When p
 File Name: This is the name of the application file. The .app on OSX and the .exe on Windows.
 
 Version Number Major: The first number used to describe the version.
+
 Version Number Minor: The second number used to describe the version.
+
 Version Number Patch: The third number used to describe the version. This is incremented automatically every time you build.
 
 New Major Version: Click this button to increase the major version by 1.
+
 New Minor Version: Click this button to increase the minor version by 1.
 
 Preview build: If this is checked the game will not actually be built. But the process will run and the build folders will be created. The Patch version will not be incremented.
@@ -68,28 +71,46 @@ BUILD!: This will perform the build as you have specified in this window.
 #OSX
 
 Download the steamCMD
+
 1. open terminal
+
 2. create a go to the directory you want the steam sdk to be located
+
 2. run curl -sqL 'https://steamcdn-a.akamaihd.net/client/installer/steamcmd_osx.tar.gz' | tar zxvf -
+
 Update the steam mac client
+
 3. open steamCMD by running ./osx32/steamcmd in terminal
+
 4. it will open and update steam
+
 5. close the steam client
+
 Download the SDK
+
 6. You will find the latest SDK to download on the right side of this page: https://partner.steamgames.com/home
+
 7. Unip the steam sdk
 
 
 #Windows
 
 Download the steamCMD
+
 1. download the steamCMD from here: https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip
+
 2. unzip the folder
+
 Update the steam windows client
+
 3. run steamCMD.exe to update steam
+
 4. close the steam client
+
 Download the SDK
+
 5. You will find the latest SDK to download on the right side of this page: https://partner.steamgames.com/home
+
 6. Unzip the steam sdk
 
 
@@ -107,17 +128,27 @@ Make sure to publish your changes!
 The BuildScript is accessible from the command line. This is useful if you want to build from Unity without the hassle of opening Unity up and using a GUI interface. Use this command to build using your current config from the command line:
 
 Windows:
+
 C:\program files\Unity\Editor\Unity.exe -quit -batchmode -executeMethod BuildScript.PerformBuild steam_login_name steam_login_password
+
 OSX:
+
 /Applications/Unity/Unity.app/Contents/MacOS/Unity -quit -batchmode -executeMethod BuildScript.PerformBuild steam_login_name steam_login_password
 
 Note that the path to the Unity application is where you have installed Unity. Listed above is the default.
 Also note that steam_login_name and steam_login_password are optional parameters that should be replaced with your steam username and password if you want to upload the build to steam. If not, just leave those arguments out.
 
 #Common Issues
+
 Unity locks up when I hit BUILD!:
+
 	When uploading to Steam we start an external process and wait for it to complete. Just wait a bit. The process is running. The two things that take the most time are checking for steam updates and actually uploading the game content. After the process is complete you will see a log in your console of how the steam upload went.
+
 I get a depot build error:
+
 	you may have added a new depot in the PickleBuilder, but not in steamworks. You need to add the new depot and publish the changes.
+
 I only see Reload Config and Open Config File in the Build Config Window:
+
 	The build config window is not serialized so when you recompile your code it will unload the build config. Select the Reload Config button to load the build_config.json that is in your project. Select Open Config File to open that json file with a text editor.
+	
